@@ -2,10 +2,7 @@ package com.darekbx.legopartscount.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
-import androidx.compose.material.Typography
-import androidx.compose.material.darkColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -14,9 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val purple200 = Color(0xFFBB86FC)
-val purple500 = Color(0xFF6200EE)
-val purple700 = Color(0xFF3700B3)
+val purple200 = Color(0xFFc62828)
+val purple700 = Color(0xFF8e0000)
 val teal200 = Color(0xFF03DAC5)
 val white = Color(0xFFFFFFFF)
 
@@ -35,15 +31,17 @@ val typography = Typography(
 )
 
 @Composable
-fun LegoPartsCountTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
+fun LegoPartsCountTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
+) {
     MaterialTheme(
-        colors = darkColors(
-            surface = Color.Black,
-            background = Color.Black,
+        colors = lightColors(
+            surface = Color.White,
+            background = Color.White,
             primary = purple200,
             primaryVariant = purple700,
             secondary = teal200,
-            onSurface = white
         ),
         typography = typography,
         shapes = shapes,

@@ -1,6 +1,6 @@
 package com.darekbx.legopartscount.repository.rebrickable.model
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class RebrickableWrapper<out T>(
     val count: Int,
@@ -8,21 +8,20 @@ data class RebrickableWrapper<out T>(
 )
 
 data class LegoSet(
-    @field:Json(name = "num_set")
+    @SerializedName("num_set")
     val setNumber: String,
     val name: String,
     val year: Int,
-    @field:Json(name = "num_parts")
+    @SerializedName("num_parts")
     val partsCount: Int,
-    @field:Json(name = "set_img_url")
+    @SerializedName("set_img_url")
     val setImageUrl: String
 )
 
 data class LegoPart(
-    @field:Json(name = "part_num")
+    @SerializedName("part_num")
     val partNumber: String,
-    @field:Json(name = "name")
     val name: String,
-    @field:Json(name = "part_img_url")
+    @SerializedName("part_img_url")
     val partImageUrl: String
 )

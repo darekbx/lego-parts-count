@@ -15,7 +15,10 @@ import com.darekbx.legopartscount.viewmodel.MainViewModel
 fun NavigationApp(mainViewModel: MainViewModel) {
     val navigationController = rememberNavController()
     val actions = remember(navigationController) { Actions(navigationController) }
-    NavHost(navController = navigationController, startDestination = SetSearch) {
+    NavHost(
+        navController = navigationController,
+        startDestination = SetSearch
+    ) {
         composable(SetSearch) {
             SetSearchScreen(mainViewModel, actions.openPartsList, actions.openDefinedParts)
         }

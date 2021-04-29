@@ -17,7 +17,7 @@ object Destinations {
 
 class Actions(navController: NavHostController) {
     val openPartsList: (String) -> Unit = { setId ->
-        navController.navigate("$PartsList/$setId")
+        navController.navigate("$PartsList/$setId") { launchSingleTop= true }
     }
     val openDefinedParts: () -> Unit = {
         navController.navigate(DefinedParts)

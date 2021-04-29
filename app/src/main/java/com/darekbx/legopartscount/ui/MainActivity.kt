@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LegoPartsCountTheme(darkTheme = true) {
+            LegoPartsCountTheme(darkTheme = false) {
                 NavigationApp(mainViewModel)
             }
         }

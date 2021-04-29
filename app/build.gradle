@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 def rebrickablePropertiesFile = rootProject.file("rebrickable.properties")
@@ -46,6 +47,8 @@ android {
 dependencies {
 
     implementation libraries
+    kapt kapt_libraries
+    implementation "com.google.accompanist:accompanist-coil:0.8.0"
 
     testImplementation 'junit:junit:4.+'
 }

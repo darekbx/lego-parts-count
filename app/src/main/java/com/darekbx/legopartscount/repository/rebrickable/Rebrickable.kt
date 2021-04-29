@@ -6,7 +6,7 @@ import com.darekbx.legopartscount.repository.rebrickable.model.RebrickableWrappe
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -24,7 +24,7 @@ private val service: Rebrickable by lazy {
     val retrofit = Retrofit.Builder()
         .baseUrl(REBRICKABLE_BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(MoshiConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     retrofit.create(Rebrickable::class.java)

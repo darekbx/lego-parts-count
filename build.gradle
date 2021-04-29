@@ -7,6 +7,7 @@ buildscript {
         def retrofit_gson_version = '2.6.2'
         def retrofit_version = '2.6.2'
         def okhttp_logging_version = '4.9.1'
+        def room_version = '2.2.5'
 
         libraries = [
 
@@ -22,19 +23,25 @@ buildscript {
                 "androidx.compose.runtime:runtime-livedata:$compose_version",
                 "androidx.navigation:navigation-compose:1.0.0-alpha10",
 
-                "com.squareup.moshi:moshi:1.12.0",
-                "com.squareup.moshi:moshi-kotlin:1.12.0",
+                "com.google.code.gson:gson:2.8.6",
 
                 "com.squareup.retrofit2:retrofit:$retrofit_version",
-                "com.squareup.retrofit2:converter-moshi:$retrofit_gson_version",
+                "com.squareup.retrofit2:converter-gson:$retrofit_gson_version",
                 "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_version",
 
                 "org.koin:koin-android:$koin_version",
-                "org.koin:koin-android-viewmodel:$koin_version"
+                "org.koin:koin-android-viewmodel:$koin_version",
+
+                "androidx.room:room-ktx:$room_version"
+        ]
+
+        kapt_libraries = [
+                "androidx.room:room-compiler:$room_version"
         ]
     }
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -49,6 +56,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
 }

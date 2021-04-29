@@ -1,5 +1,6 @@
 package com.darekbx.legopartscount.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,6 +58,10 @@ class MainViewModel(
             val result = rebrickable.searchParts(query).results
             partSearchResult.postValue(result)
         }
+    }
+
+    fun addDefinedParts(parts: List<String>) {
+
     }
 
     private fun launchDataLoad(block: suspend () -> Unit) {

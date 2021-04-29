@@ -48,7 +48,6 @@ fun SearchView(mainViewModel: MainViewModel, openDefinedParts: () -> Unit) {
             "Lego parts count in sets",
             style = MaterialTheme.typography.h5,
             textAlign = TextAlign.Center,
-            color = Color.White,
             modifier = Modifier.padding(top = 32.dp)
         )
         Row(
@@ -67,8 +66,7 @@ fun SearchView(mainViewModel: MainViewModel, openDefinedParts: () -> Unit) {
                 onClick = { mainViewModel.searchForSet(searchValue.value.text) }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    "Search",
-                    tint = Color.White
+                    "Search"
                 )
             }
         }
