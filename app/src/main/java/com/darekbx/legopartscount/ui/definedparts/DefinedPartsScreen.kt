@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.coil.rememberCoilPainter
 import com.darekbx.legopartscount.ui.ErrorView
 import com.darekbx.legopartscount.ui.LoadingView
+import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
 import com.darekbx.legopartscount.viewmodel.MainViewModel
 
 @Composable
 fun DefinedPartsScreen(
     mainViewModel: MainViewModel,
+    definedPartsViewModel: DefinedPartsViewModel,
     navigateUp: () -> Unit
 ) {
     val selectedItems = mutableListOf<String>()
@@ -50,7 +52,7 @@ fun DefinedPartsScreen(
             }
             Box(Modifier.weight(0.1F, false)) {
                 AddButton {
-                    mainViewModel.addDefinedParts(selectedItems)
+                    definedPartsViewModel.addDefinedParts(selectedItems)
                     navigateUp()
                 }
             }

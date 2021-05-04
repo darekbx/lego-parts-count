@@ -1,7 +1,9 @@
 package com.darekbx.legopartscount
 
 import android.app.Application
+import com.darekbx.legopartscount.repository.database.AppDatabase
 import com.darekbx.legopartscount.repository.rebrickable.getRebrickableService
+import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
 import com.darekbx.legopartscount.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -15,8 +17,14 @@ class LegoPartsCountApp: Application() {
         single { getRebrickableService() }
     }
 
+    private val databaseModule = module {
+        single { AppDatabase.getDatabase(get()) }
+        single { (get() as AppDatabase).definedPartsDao() }
+    }
+
     private val viewModelModule = module {
         viewModel { MainViewModel(get()) }
+        viewModel { DefinedPartsViewModel(get()) }
     }
 
     override fun onCreate() {
@@ -27,7 +35,7 @@ class LegoPartsCountApp: Application() {
                 androidLogger()
             }
             androidContext(this@LegoPartsCountApp)
-            modules(commonModule, viewModelModule)
+            modules(commonModule, viewModelModule, databaseModule)
         }
     }
 }

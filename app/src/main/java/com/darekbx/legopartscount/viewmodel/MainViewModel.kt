@@ -40,10 +40,8 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val rebrickable: Rebrickable
-) : ViewModel() {
+) : BaseViewModel() {
 
-    val loadingState = MutableLiveData<Boolean>()
-    val errorState = MutableLiveData<Exception>()
     val setSearchResult = MutableLiveData<LegoSet>()
     val partSearchResult = MutableLiveData<List<LegoPart>>()
 
@@ -57,26 +55,6 @@ class MainViewModel(
         launchDataLoad {
             val result = rebrickable.searchParts(query).results
             partSearchResult.postValue(result)
-        }
-    }
-
-    fun addDefinedParts(parts: List<String>) {
-
-    }
-
-    private fun launchDataLoad(block: suspend () -> Unit) {
-        viewModelScope.launch {
-            try {
-                loadingState.value = true
-                block()
-            } catch (error: Exception) {
-                if (BuildConfig.DEBUG) {
-                    error.printStackTrace()
-                }
-                errorState.postValue(error)
-            } finally {
-                loadingState.value = false
-            }
         }
     }
 }
