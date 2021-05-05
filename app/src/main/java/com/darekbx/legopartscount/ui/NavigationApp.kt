@@ -8,11 +8,14 @@ import com.darekbx.legopartscount.ui.Destinations.PartsList
 import com.darekbx.legopartscount.ui.Destinations.PartsListArgs.SetId
 import com.darekbx.legopartscount.ui.Destinations.SetSearch
 import com.darekbx.legopartscount.ui.Destinations.DefinedParts
+import com.darekbx.legopartscount.ui.Destinations.ViewDefinedParts
 import com.darekbx.legopartscount.ui.definedparts.DefinedPartsScreen
-import com.darekbx.legopartscount.viewmodel.MainViewModel
+import com.darekbx.legopartscount.ui.viewdefinedparts.ViewDefinedPartsScreen
+import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
+import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
 @Composable
-fun NavigationApp(mainViewModel: MainViewModel) {
+fun NavigationApp(rebrickableViewModel: RebrickableViewModel, definedPartsViewModel: DefinedPartsViewModel) {
     val navigationController = rememberNavController()
     val actions = remember(navigationController) { Actions(navigationController) }
     NavHost(
@@ -20,7 +23,12 @@ fun NavigationApp(mainViewModel: MainViewModel) {
         startDestination = SetSearch
     ) {
         composable(SetSearch) {
-            SetSearchScreen(mainViewModel, actions.openPartsList, actions.openDefinedParts)
+            SetSearchScreen(
+                rebrickableViewModel,
+                actions.openPartsList,
+                actions.openDefinedParts,
+                actions.openViewDefinedParts
+            )
         }
         composable(
             "$PartsList/{$SetId}",
@@ -30,12 +38,15 @@ fun NavigationApp(mainViewModel: MainViewModel) {
         ) { navBackStackEntry ->
             PartsListScreen(
                 navBackStackEntry.arguments?.getString(SetId)!!,
-                mainViewModel,
+                rebrickableViewModel,
                 actions.navigateUp
             )
         }
         composable(DefinedParts) {
-            DefinedPartsScreen(mainViewModel, actions.navigateUp)
+            DefinedPartsScreen(rebrickableViewModel, definedPartsViewModel, actions.navigateUp)
+        }
+        composable(ViewDefinedParts) {
+            ViewDefinedPartsScreen(definedPartsViewModel)
         }
     }
 }

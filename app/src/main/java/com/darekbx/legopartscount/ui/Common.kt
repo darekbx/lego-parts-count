@@ -11,11 +11,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.darekbx.legopartscount.viewmodel.MainViewModel
+import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
 @Composable
-fun LoadingView(mainViewModel: MainViewModel) {
-    val loadingState = mainViewModel.loadingState.observeAsState(false)
+fun LoadingView(rebrickableViewModel: RebrickableViewModel) {
+    val loadingState = rebrickableViewModel.loadingState.observeAsState(false)
     loadingState.value?.let { loadingVisible ->
         if (loadingVisible) {
             Box(
@@ -33,8 +33,8 @@ fun LoadingView(mainViewModel: MainViewModel) {
 }
 
 @Composable
-fun ErrorView(mainViewModel: MainViewModel) {
-    val errorState = mainViewModel.errorState.observeAsState()
+fun ErrorView(rebrickableViewModel: RebrickableViewModel) {
+    val errorState = rebrickableViewModel.errorState.observeAsState()
     errorState.value?.let {
         Box(
             modifier = Modifier

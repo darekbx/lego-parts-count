@@ -4,7 +4,7 @@ import android.app.Application
 import com.darekbx.legopartscount.repository.database.AppDatabase
 import com.darekbx.legopartscount.repository.rebrickable.getRebrickableService
 import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
-import com.darekbx.legopartscount.viewmodel.MainViewModel
+import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.android.viewmodel.dsl.viewModel
@@ -23,7 +23,7 @@ class LegoPartsCountApp: Application() {
     }
 
     private val viewModelModule = module {
-        viewModel { MainViewModel(get()) }
+        viewModel { RebrickableViewModel(get()) }
         viewModel { DefinedPartsViewModel(get()) }
     }
 

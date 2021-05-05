@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.darekbx.legopartscount.BuildConfig
+import com.darekbx.legopartscount.repository.database.DefinedPartEntity
 import com.darekbx.legopartscount.repository.rebrickable.Rebrickable
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoPart
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoSet
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
  *
  */
 
-class MainViewModel(
+class RebrickableViewModel(
     private val rebrickable: Rebrickable
 ) : BaseViewModel() {
 
@@ -54,7 +55,14 @@ class MainViewModel(
     fun searchForPart(query: String) {
         launchDataLoad {
             val result = rebrickable.searchParts(query).results
-            partSearchResult.postValue(result)
+            /**
+             * Map only integer part numbers, to exclude "special" parts like:
+             * part_num: 14769pr1029
+             * name: Tile Round 2 x 2 with Bottom Stud Holder with Time Gears Print
+             */
+            val filteredResults = result
+                .filter { it.partNumber.toIntOrNull() != null && it.partImageUrl != null }
+            partSearchResult.postValue(filteredResults)
         }
     }
 }

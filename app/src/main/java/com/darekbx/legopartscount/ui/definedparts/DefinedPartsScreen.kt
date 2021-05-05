@@ -15,19 +15,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.darekbx.legopartscount.model.DefinedPart
 import com.google.accompanist.coil.rememberCoilPainter
 import com.darekbx.legopartscount.ui.ErrorView
 import com.darekbx.legopartscount.ui.LoadingView
 import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
-import com.darekbx.legopartscount.viewmodel.MainViewModel
+import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
 @Composable
 fun DefinedPartsScreen(
-    mainViewModel: MainViewModel,
+    rebrickableViewModel: RebrickableViewModel,
     definedPartsViewModel: DefinedPartsViewModel,
     navigateUp: () -> Unit
 ) {
-    val selectedItems = mutableListOf<String>()
+    val selectedItems = mutableListOf<DefinedPart>()
 
     Box {
         Column(
@@ -39,10 +40,10 @@ fun DefinedPartsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(Modifier.weight(0.1F, false)) {
-                PartSearchView(mainViewModel)
+                PartSearchView(rebrickableViewModel)
             }
             Box(Modifier.weight(1F, true)) {
-                PartsList(mainViewModel) { partNumber, isSelected ->
+                PartsList(rebrickableViewModel) { partNumber, isSelected ->
                     if (isSelected) {
                         selectedItems.add(partNumber)
                     } else {
@@ -58,18 +59,18 @@ fun DefinedPartsScreen(
             }
         }
 
-        LoadingView(mainViewModel)
-        ErrorView(mainViewModel)
+        LoadingView(rebrickableViewModel)
+        ErrorView(rebrickableViewModel)
     }
 
     SideEffect {
         // Reset value
-        mainViewModel.partSearchResult.value = null
+        rebrickableViewModel.partSearchResult.value = null
     }
 }
 
 @Composable
-fun PartSearchView(mainViewModel: MainViewModel) {
+fun PartSearchView(rebrickableViewModel: RebrickableViewModel) {
     val searchValue = remember { mutableStateOf(TextFieldValue()) }
 
     Row(
@@ -88,7 +89,7 @@ fun PartSearchView(mainViewModel: MainViewModel) {
             modifier = Modifier
                 .padding(start = 4.dp)
                 .fillMaxHeight(),
-            onClick = { mainViewModel.searchForPart(searchValue.value.text) }) {
+            onClick = { rebrickableViewModel.searchForPart(searchValue.value.text) }) {
             Icon(
                 imageVector = Icons.Filled.Search,
                 "Search"
@@ -99,10 +100,10 @@ fun PartSearchView(mainViewModel: MainViewModel) {
 
 @Composable
 fun PartsList(
-    mainViewModel: MainViewModel,
-    onItemSelect: (partNum: String, isChecked: Boolean) -> Unit
+    rebrickableViewModel: RebrickableViewModel,
+    onItemSelect: (DefinedPart, isChecked: Boolean) -> Unit
 ) {
-    val partsList = mainViewModel.partSearchResult.observeAsState()
+    val partsList = rebrickableViewModel.partSearchResult.observeAsState()
     partsList.value?.let {
         Column(
             Modifier
@@ -137,12 +138,18 @@ fun PartsList(
                             fontSize = 11.sp
                         )
                     }
+
+                    val definedPart = DefinedPart(
+                        legoPart.partNumber.toInt(),
+                        legoPart.partImageUrl,
+                        legoPart.name
+                    )
                     Checkbox(
                         modifier = Modifier.weight(0.1f, true),
                         checked = isChecked.value,
                         onCheckedChange = {
                             isChecked.value = it
-                            onItemSelect(legoPart.partNumber, it)
+                            onItemSelect(definedPart, it)
                         })
                 }
                 Divider(color = Color.LightGray, thickness = 1.dp)

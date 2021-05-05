@@ -9,30 +9,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.style.TextAlign
-import com.darekbx.legopartscount.viewmodel.MainViewModel
+import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
 @Composable
 fun SetSearchScreen(
-    mainViewModel: MainViewModel,
+    rebrickableViewModel: RebrickableViewModel,
     openPartsList: (String) -> Unit,
-    openDefinedParts: () -> Unit
+    openDefinedParts: () -> Unit,
+    openViewDefinedParts: () -> Unit
 ) {
     Box {
-        SearchView(mainViewModel, openDefinedParts)
-        SearchResultView(mainViewModel, openPartsList)
+        SearchView(rebrickableViewModel, openDefinedParts, openViewDefinedParts)
+        SearchResultView(rebrickableViewModel, openPartsList)
 
-        LoadingView(mainViewModel)
-        ErrorView(mainViewModel)
+        LoadingView(rebrickableViewModel)
+        ErrorView(rebrickableViewModel)
     }
 }
 
 @Composable
-fun SearchView(mainViewModel: MainViewModel, openDefinedParts: () -> Unit) {
+fun SearchView(rebrickableViewModel: RebrickableViewModel,
+               openDefinedParts: () -> Unit,
+               openViewDefinedParts: () -> Unit,
+) {
     val searchValue = remember { mutableStateOf(TextFieldValue()) }
 
     Column(
@@ -63,24 +66,37 @@ fun SearchView(mainViewModel: MainViewModel, openDefinedParts: () -> Unit) {
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .fillMaxHeight(),
-                onClick = { mainViewModel.searchForSet(searchValue.value.text) }) {
+                onClick = { rebrickableViewModel.searchForSet(searchValue.value.text) }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     "Search"
                 )
             }
         }
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { openDefinedParts() }) {
-            Text("Define parts group")
+        Row {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.5F, true)
+                    .padding(end = 2.dp),
+                onClick = { openViewDefinedParts() }) {
+                Text("View Defined parts")
+            }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.5F, true)
+                    .padding(start = 2.dp),
+                onClick = { openDefinedParts() }) {
+                Text("Define parts group")
+            }
         }
     }
 }
 
 @Composable
-fun SearchResultView(mainViewModel: MainViewModel, openPartsList: (String) -> Unit) {
-    val setSearchResult = mainViewModel.setSearchResult.observeAsState()
+fun SearchResultView(rebrickableViewModel: RebrickableViewModel, openPartsList: (String) -> Unit) {
+    val setSearchResult = rebrickableViewModel.setSearchResult.observeAsState()
     setSearchResult.value?.let { legoSet ->
         openPartsList(legoSet!!.setNumber)
     }

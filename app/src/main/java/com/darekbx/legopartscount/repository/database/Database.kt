@@ -6,6 +6,8 @@ import androidx.room.*
 @Entity(tableName = "defined_part")
 class DefinedPartEntity(
     @PrimaryKey @ColumnInfo(name = "part_number") val partNumber: Int,
+    @ColumnInfo(name = "image_url") val imageUrl: String,
+    @ColumnInfo(name = "name") val name: String
 )
 
 @Dao
@@ -14,11 +16,11 @@ interface DefinedPartDao {
     @Insert
     suspend fun insert(definedPartEntities: List<DefinedPartEntity>)
 
-    @Query("SELECT part_number FROM defined_part")
+    @Query("SELECT * FROM defined_part")
     suspend fun selectAll(): List<DefinedPartEntity>
 
-    @Delete
-    suspend fun delete(partEntityNumber: DefinedPartEntity)
+    @Query("DELETE FROM defined_part WHERE part_number = :partNumber")
+    suspend fun delete(partNumber: Int)
 }
 
 @Database(entities = arrayOf(DefinedPartEntity::class), version = 1, exportSchema = false)
