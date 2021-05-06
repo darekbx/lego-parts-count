@@ -1,60 +1,56 @@
 package com.darekbx.legopartscount.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.darekbx.legopartscount.BuildConfig
-import com.darekbx.legopartscount.repository.database.DefinedPartEntity
+import com.darekbx.legopartscount.repository.database.DefinedPartDao
 import com.darekbx.legopartscount.repository.rebrickable.Rebrickable
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoPart
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoSet
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-/**
- * Flow:
- *
- *  Page size should be everywhere at least 10000
- *
- * At first user should define parts to search for
- *  - parts are defined by design number
- *  - there is autocomplete with dynamic search through GET /api/v3/lego/parts endpoint
- *  - user can search by design number or by name
- *  - from autocomplete parts are being added to the room database
- *
- * There will be theme autocomplete, filled during app start
- *  - when parts are not defined then there is no ability to serach by theme
- *  - themes are taken from api/v3/lego/themes?page_size=1000
- *  - themes should be groupped by parent_id to find all child themes
- *  - child themes should be displayed like: Techinc / Construction
- *
- * When theme is choosed and parts are defined then user can press button search
- *  - search is being executed by GET /api/v3/lego/sets/?theme_id= for main theme and child themes
- *  - every searched set should be searched with GET /api/v3/lego/sets/{set_num}/parts/ endpoint
- *  - parts should searched using defined parts and added to the list
- *  - during certain set search, list is visible and search results are displayed dynamically on the list
- *  - determinate progress is updating after every set
- *  - add button "Stop" to cancel search
- *
- */
+import com.darekbx.legopartscount.repository.rebrickable.model.LegoSetPart
 
 class RebrickableViewModel(
-    private val rebrickable: Rebrickable
+    private val rebrickable: Rebrickable,
+    private val definedPartDao: DefinedPartDao
 ) : BaseViewModel() {
 
     val setSearchResult = MutableLiveData<LegoSet>()
+    val setPartsSearchResult = MutableLiveData<List<LegoSetPart>>()
     val partSearchResult = MutableLiveData<List<LegoPart>>()
 
-    fun searchForSet(setNumber: String) {
+    fun searchForSet(query: String) {
         launchDataLoad {
-            setSearchResult.postValue(LegoSet("$setNumber-1", "Wheel", 2016, 3984, "url"))
+            val legoSets = rebrickable.searchForSets(query)
+            setSearchResult.postValue(legoSets.results.first())
+        }
+    }
+
+    fun fetchSet(setNumber: String): LiveData<LegoSet> {
+        val setResult = MutableLiveData<LegoSet>()
+        launchDataLoad {
+            val legoSet = rebrickable.fetchSet(setNumber)
+            setResult.postValue(legoSet)
+        }
+        return setResult
+    }
+
+    fun fetchSetParts(setNumber: String) {
+        launchDataLoad {
+            val definedParts = definedPartDao.selectAll()
+            val parts = rebrickable.fetchSetParts(setNumber)
+                .results
+                .filter { legoSetPart ->
+                    definedParts.any {
+                        "${it.partNumber}" == legoSetPart.part.partNumber
+                    }
+                }
+            setPartsSearchResult.postValue(parts)
         }
     }
 
     fun searchForPart(query: String) {
         launchDataLoad {
             val result = rebrickable.searchParts(query).results
+
             /**
              * Map only integer part numbers, to exclude "special" parts like:
              * part_num: 14769pr1029

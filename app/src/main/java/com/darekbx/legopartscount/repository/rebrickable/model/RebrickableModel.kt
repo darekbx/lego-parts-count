@@ -8,7 +8,7 @@ data class RebrickableWrapper<out T>(
 )
 
 data class LegoSet(
-    @SerializedName("num_set")
+    @SerializedName("set_num")
     val setNumber: String,
     val name: String,
     val year: Int,
@@ -24,4 +24,13 @@ data class LegoPart(
     val name: String,
     @SerializedName("part_img_url")
     val partImageUrl: String
+)
+
+data class LegoSetPart(
+    val part: LegoPart,
+    val quantity: Int,
+    @SerializedName("num_sets")
+    val numSets: Int,
+    @SerializedName("element_id")
+    val elementId: String
 )

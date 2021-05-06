@@ -10,6 +10,7 @@ import com.darekbx.legopartscount.ui.Destinations.SetSearch
 import com.darekbx.legopartscount.ui.Destinations.DefinedParts
 import com.darekbx.legopartscount.ui.Destinations.ViewDefinedParts
 import com.darekbx.legopartscount.ui.definedparts.DefinedPartsScreen
+import com.darekbx.legopartscount.ui.partslist.PartsListScreen
 import com.darekbx.legopartscount.ui.viewdefinedparts.ViewDefinedPartsScreen
 import com.darekbx.legopartscount.viewmodel.DefinedPartsViewModel
 import com.darekbx.legopartscount.viewmodel.RebrickableViewModel

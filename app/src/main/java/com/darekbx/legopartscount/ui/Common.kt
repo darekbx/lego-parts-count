@@ -1,6 +1,7 @@
 package com.darekbx.legopartscount.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,20 +15,25 @@ import androidx.compose.ui.graphics.Color
 import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
 @Composable
+fun LoadingView() {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .background(Color(0x99000000)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+
+@Composable
 fun LoadingView(rebrickableViewModel: RebrickableViewModel) {
     val loadingState = rebrickableViewModel.loadingState.observeAsState(false)
     loadingState.value?.let { loadingVisible ->
         if (loadingVisible) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .background(Color(0x66000000)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-
+            LoadingView()
         }
     }
 }
@@ -40,10 +46,13 @@ fun ErrorView(rebrickableViewModel: RebrickableViewModel) {
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .background(Color(0x66000000)),
+                .clickable {
+                    rebrickableViewModel.clearError()
+                }
+                .background(Color(0x99000000)),
             contentAlignment = Alignment.Center
         ) {
-            Text("${it.message}", color = Color.Red)
+            Text("${it.message}", color = purple700)
         }
     }
 }

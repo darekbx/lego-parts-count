@@ -98,6 +98,7 @@ fun SearchView(rebrickableViewModel: RebrickableViewModel,
 fun SearchResultView(rebrickableViewModel: RebrickableViewModel, openPartsList: (String) -> Unit) {
     val setSearchResult = rebrickableViewModel.setSearchResult.observeAsState()
     setSearchResult.value?.let { legoSet ->
+        rebrickableViewModel.setSearchResult.value = null
         openPartsList(legoSet!!.setNumber)
     }
 }

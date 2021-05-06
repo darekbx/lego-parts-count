@@ -23,7 +23,7 @@ class LegoPartsCountApp: Application() {
     }
 
     private val viewModelModule = module {
-        viewModel { RebrickableViewModel(get()) }
+        viewModel { RebrickableViewModel(get(), get()) }
         viewModel { DefinedPartsViewModel(get()) }
     }
 

@@ -11,6 +11,10 @@ open class BaseViewModel : ViewModel() {
     val loadingState = MutableLiveData<Boolean>()
     val errorState = MutableLiveData<Exception>()
 
+    fun clearError() {
+        errorState.postValue(null)
+    }
+
     protected fun launchDataLoad(block: suspend () -> Unit) {
         viewModelScope.launch {
             try {
