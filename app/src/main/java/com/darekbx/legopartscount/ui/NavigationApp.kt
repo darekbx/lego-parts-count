@@ -39,8 +39,7 @@ fun NavigationApp(rebrickableViewModel: RebrickableViewModel, definedPartsViewMo
         ) { navBackStackEntry ->
             PartsListScreen(
                 navBackStackEntry.arguments?.getString(SetId)!!,
-                rebrickableViewModel,
-                actions.navigateUp
+                rebrickableViewModel
             )
         }
         composable(DefinedParts) {

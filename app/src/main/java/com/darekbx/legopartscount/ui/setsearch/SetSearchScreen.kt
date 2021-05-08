@@ -1,6 +1,7 @@
 package com.darekbx.legopartscount.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 
@@ -48,7 +50,7 @@ fun SearchView(rebrickableViewModel: RebrickableViewModel,
     ) {
 
         Text(
-            "Lego parts count in sets",
+            "Count defined parts in Lego sets",
             style = MaterialTheme.typography.h5,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 32.dp)
@@ -61,6 +63,7 @@ fun SearchView(rebrickableViewModel: RebrickableViewModel,
                 value = searchValue.value,
                 label = { Text(text = "Set number", color = MaterialTheme.colors.onSurface) },
                 onValueChange = { searchValue.value = it },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Button(
                 modifier = Modifier

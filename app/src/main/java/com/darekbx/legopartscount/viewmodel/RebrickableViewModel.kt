@@ -14,7 +14,7 @@ class RebrickableViewModel(
 ) : BaseViewModel() {
 
     val setSearchResult = MutableLiveData<LegoSet>()
-    val setPartsSearchResult = MutableLiveData<List<LegoSetPart>>()
+    val setPartsCount = MutableLiveData<Int>()
     val partSearchResult = MutableLiveData<List<LegoPart>>()
 
     fun searchForSet(query: String) {
@@ -28,12 +28,14 @@ class RebrickableViewModel(
         val setResult = MutableLiveData<LegoSet>()
         launchDataLoad {
             val legoSet = rebrickable.fetchSet(setNumber)
+            setPartsCount.postValue(legoSet.partsCount)
             setResult.postValue(legoSet)
         }
         return setResult
     }
 
-    fun fetchSetParts(setNumber: String) {
+    fun fetchSetParts(setNumber: String): LiveData<List<LegoSetPart>> {
+        val setPartsSearchResult = MutableLiveData<List<LegoSetPart>>()
         launchDataLoad {
             val definedParts = definedPartDao.selectAll()
             val parts = rebrickable.fetchSetParts(setNumber)
@@ -45,6 +47,7 @@ class RebrickableViewModel(
                 }
             setPartsSearchResult.postValue(parts)
         }
+        return setPartsSearchResult
     }
 
     fun searchForPart(query: String) {

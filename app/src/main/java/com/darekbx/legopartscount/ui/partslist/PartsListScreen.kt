@@ -4,11 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoPart
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoSet
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoSetPart
+import com.darekbx.legopartscount.ui.ErrorView
 import com.darekbx.legopartscount.ui.LoadingView
 import com.darekbx.legopartscount.viewmodel.RebrickableViewModel
 import com.google.accompanist.coil.rememberCoilPainter
@@ -26,24 +26,32 @@ import com.google.accompanist.coil.rememberCoilPainter
 @Composable
 fun PartsListScreen(
     setNumber: String,
-    rebrickableViewModel: RebrickableViewModel,
-    navigateUp: () -> Unit
+    rebrickableViewModel: RebrickableViewModel
 ) {
-    Column(Modifier.padding(8.dp)) {
-        SetPreview(setNumber, rebrickableViewModel)
-        DisplayParts(setNumber, rebrickableViewModel)
+    Box {
+        Column {
+            SetPreview(setNumber, rebrickableViewModel) { legoSet ->
+                Divider(color = Color.LightGray, thickness = 1.dp)
+                DisplayParts(setNumber, legoSet.partsCount, rebrickableViewModel)
+            }
+        }
+        LoadingView(rebrickableViewModel)
+        ErrorView(rebrickableViewModel)
     }
 
-    SideEffect {
-        rebrickableViewModel.setPartsSearchResult.value == null
-    }
+    rebrickableViewModel.fetchSetParts(setNumber)
 }
 
 @Composable
-fun SetPreview(setNumber: String, rebrickableViewModel: RebrickableViewModel) {
+fun SetPreview(
+    setNumber: String,
+    rebrickableViewModel: RebrickableViewModel,
+    loadedCallback: @Composable (LegoSet) -> Unit
+) {
     val legoSet = rebrickableViewModel.fetchSet(setNumber).observeAsState()
     legoSet.value?.let { set ->
         DisplaySetPreview(set)
+        loadedCallback(set)
     } ?: run { LoadingView() }
 }
 
@@ -58,18 +66,22 @@ private fun DisplaySetPreview(
         ""
     )
 ) {
-    Row(Modifier.fillMaxWidth()) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
         Image(
             modifier = Modifier
                 .width(100.dp)
                 .height(100.dp)
-                .weight(0.2F),
+                .weight(0.25F),
             painter = rememberCoilPainter(set.setImageUrl),
             contentDescription = set.name
         )
         Column(
             Modifier
-                .weight(0.8F)
+                .weight(0.75F)
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
@@ -81,25 +93,41 @@ private fun DisplaySetPreview(
 }
 
 @Composable
-private fun DisplayParts(setNumber: String, rebrickableViewModel: RebrickableViewModel) {
-    rebrickableViewModel.fetchSetParts(setNumber)
-    rebrickableViewModel.setPartsSearchResult.observeAsState().value?.let { parts ->
-        Column(
-            Modifier
-                .padding(top = 8.dp)
-                .verticalScroll(
-                    rememberScrollState(0),
-                    true
-                )
-        ) {
+private fun DisplayParts(
+    setNumber: String,
+    partsCount: Int,
+    rebrickableViewModel: RebrickableViewModel
+) {
+    val legoSetParts = rebrickableViewModel.fetchSetParts(setNumber).observeAsState()
+
+    Column(
+        Modifier
+            .padding(8.dp)
+            .verticalScroll(
+                rememberScrollState(0),
+                true
+            )
+    ) {
+
+        legoSetParts.value?.let { parts ->
             parts.forEach { legoSetPart ->
                 DisplayPart(legoSetPart)
+                Divider(color = Color.LightGray, thickness = 1.dp)
             }
 
-            val sum = parts.sumBy { it.quantity }
-            Text("SUM: ${sum}")
+            val definedSum = parts.sumBy { it.quantity }
+            Text(
+                "Items count: $definedSum",
+                Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "Defined parts to parts count: %.2f".format(definedSum / partsCount.toFloat()),
+                Modifier.padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+                fontWeight = FontWeight.Bold
+            )
         }
-    } ?: run { LoadingView() }
+    }
 }
 
 @Preview
@@ -127,20 +155,53 @@ private fun DisplayPart(
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.8F)) {
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(legoPart.name, Modifier.width(150.dp))
-                GrayText("Quantity: ${legoSetPart.quantity}")
-            }
+                .padding(start = 8.dp)
+                .weight(0.8F)
+        ) {
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
+                    legoPart.name,
+                    Modifier.weight(0.8F),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row(
+                    Modifier.weight(0.2F),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    GrayText("Quantity: ")
+                    Text(
+                        "${legoSetPart.quantity}",
+                        color = Color.Gray,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
                     legoPart.partNumber,
                     color = Color.Gray,
-                    fontSize = 11.sp
+                    fontSize = 11.sp,
+                    modifier = Modifier.weight(0.8F)
                 )
-                GrayText("In sets: ${legoSetPart.numSets}")
+                Row(
+                    Modifier.weight(0.2F),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    GrayText("In sets: ")
+                    Text(
+                        "${legoSetPart.numSets}",
+                        color = Color.Gray,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
