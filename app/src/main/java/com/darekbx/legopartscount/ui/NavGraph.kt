@@ -2,6 +2,7 @@ package com.darekbx.legopartscount.ui
 
 import androidx.navigation.compose.navigate
 import androidx.navigation.NavHostController
+import com.darekbx.legopartscount.ui.Destinations.AllTechnicSetsSearch
 import com.darekbx.legopartscount.ui.Destinations.PartsList
 import com.darekbx.legopartscount.ui.Destinations.DefinedParts
 import com.darekbx.legopartscount.ui.Destinations.ViewDefinedParts
@@ -11,6 +12,7 @@ object Destinations {
     const val PartsList = "PartsList"
     const val DefinedParts = "DefinedParts"
     const val ViewDefinedParts = "ViewDefinedParts"
+    const val AllTechnicSetsSearch = "AllTechnicSetsSearch"
 
     object PartsListArgs {
         const val SetId = "setId"
@@ -26,6 +28,9 @@ class Actions(navController: NavHostController) {
     }
     val openViewDefinedParts: () -> Unit = {
         navController.navigate(ViewDefinedParts)
+    }
+    val openAllTechnicSetsSearch: () -> Unit = {
+        navController.navigate(AllTechnicSetsSearch)
     }
     val navigateUp: () -> Unit = {
         navController.popBackStack()

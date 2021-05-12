@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val purple200 = Color(0xFFc62828)
-val purple700 = Color(0xFF8e0000)
+val purple200 = Color(0xFF222222)
+val purple700 = Color(0xFF000000)
 val teal200 = Color(0xFF03DAC5)
 val white = Color(0xFFFFFFFF)
 

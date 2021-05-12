@@ -8,6 +8,10 @@ def rebrickablePropertiesFile = rootProject.file("rebrickable.properties")
 def rebrickableProperties = new Properties()
 rebrickableProperties.load(new FileInputStream(rebrickablePropertiesFile))
 
+def bricksetPropertiesFile = rootProject.file("brickset.properties")
+def bricksetProperties = new Properties()
+bricksetProperties.load(new FileInputStream(bricksetPropertiesFile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -20,6 +24,9 @@ android {
         versionName "1.0"
 
         buildConfigField 'String', 'REBRICKABLE_API_KEY', "\"${rebrickableProperties["apiKey"]}\""
+        buildConfigField 'String', 'BRICKSET_API_KEY', "\"${bricksetProperties["apiKey"]}\""
+        buildConfigField 'String', 'BRICKSET_USER_NAME', "\"${bricksetProperties["userName"]}\""
+        buildConfigField 'String', 'BRICKSET_PASSWORD', "\"${bricksetProperties["password"]}\""
     }
 
     buildTypes {

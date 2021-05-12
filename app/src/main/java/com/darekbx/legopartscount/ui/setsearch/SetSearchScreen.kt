@@ -22,10 +22,16 @@ fun SetSearchScreen(
     rebrickableViewModel: RebrickableViewModel,
     openPartsList: (String) -> Unit,
     openDefinedParts: () -> Unit,
-    openViewDefinedParts: () -> Unit
+    openViewDefinedParts: () -> Unit,
+    openAllTechnicSetsSearch: () -> Unit
 ) {
     Box {
-        SearchView(rebrickableViewModel, openDefinedParts, openViewDefinedParts)
+        SearchView(
+            rebrickableViewModel,
+            openDefinedParts,
+            openViewDefinedParts,
+            openAllTechnicSetsSearch
+        )
         SearchResultView(rebrickableViewModel, openPartsList)
 
         LoadingView(rebrickableViewModel)
@@ -34,9 +40,11 @@ fun SetSearchScreen(
 }
 
 @Composable
-fun SearchView(rebrickableViewModel: RebrickableViewModel,
-               openDefinedParts: () -> Unit,
-               openViewDefinedParts: () -> Unit,
+fun SearchView(
+    rebrickableViewModel: RebrickableViewModel,
+    openDefinedParts: () -> Unit,
+    openViewDefinedParts: () -> Unit,
+    openAllTechnicSetsSearch: () -> Unit
 ) {
     val searchValue = remember { mutableStateOf(TextFieldValue()) }
 
@@ -55,27 +63,39 @@ fun SearchView(rebrickableViewModel: RebrickableViewModel,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 32.dp)
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.height(56.dp)
-        ) {
-            TextField(
-                value = searchValue.value,
-                label = { Text(text = "Set number", color = MaterialTheme.colors.onSurface) },
-                onValueChange = { searchValue.value = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-            Button(
+        Column(Modifier.padding(start = 16.dp, end = 16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(start = 4.dp)
-                    .fillMaxHeight(),
-                onClick = { rebrickableViewModel.searchForSet(searchValue.value.text) }) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    "Search"
+                    .height(56.dp)
+                    .fillMaxWidth()
+            ) {
+                TextField(
+                    modifier = Modifier.weight(0.8f),
+                    value = searchValue.value,
+                    label = { Text(text = "Set number", color = MaterialTheme.colors.onSurface) },
+                    onValueChange = { searchValue.value = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
+                Button(
+                    modifier = Modifier
+                        .weight(0.2f)
+                        .padding(start = 4.dp)
+                        .fillMaxHeight(),
+                    onClick = { rebrickableViewModel.searchForSet(searchValue.value.text) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        "Search"
+                    )
+                }
+            }
+            Button(modifier = Modifier
+                .padding(top = 2.dp)
+                .fillMaxWidth(), onClick = { openAllTechnicSetsSearch() }) {
+                Text(text = "Search for all Technic sets")
             }
         }
+
         Row {
             Button(
                 modifier = Modifier

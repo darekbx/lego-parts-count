@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darekbx.legopartscount.model.DefinedPart
+import com.darekbx.legopartscount.repository.rebrickable.model.LegoPart
 import com.google.accompanist.coil.rememberCoilPainter
 import com.darekbx.legopartscount.ui.ErrorView
 import com.darekbx.legopartscount.ui.LoadingView
@@ -115,43 +116,7 @@ fun PartsList(
         ) {
             it.forEach { legoPart ->
                 val isChecked = remember { mutableStateOf(false) }
-                Row(
-                    modifier = Modifier.padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp),
-                        painter = rememberCoilPainter(legoPart.partImageUrl),
-                        contentDescription = legoPart.name
-                    )
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 8.dp, end = 8.dp)
-                            .weight(1.0f, true)
-                    ) {
-                        Text(legoPart.name)
-                        Text(
-                            legoPart.partNumber,
-                            color = Color.Gray,
-                            fontSize = 11.sp
-                        )
-                    }
-
-                    val definedPart = DefinedPart(
-                        legoPart.partNumber.toInt(),
-                        legoPart.partImageUrl,
-                        legoPart.name
-                    )
-                    Checkbox(
-                        modifier = Modifier.weight(0.1f, true),
-                        checked = isChecked.value,
-                        onCheckedChange = {
-                            isChecked.value = it
-                            onItemSelect(definedPart, it)
-                        })
-                }
+                DisplayItem(legoPart, isChecked, onItemSelect)
                 Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
@@ -163,6 +128,51 @@ fun PartsList(
         ) {
             Text("Empty list")
         }
+    }
+}
+
+@Composable
+private fun DisplayItem(
+    legoPart: LegoPart,
+    isChecked: MutableState<Boolean>,
+    onItemSelect: (DefinedPart, isChecked: Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            modifier = Modifier
+                .width(30.dp)
+                .height(30.dp),
+            painter = rememberCoilPainter(legoPart.partImageUrl),
+            contentDescription = legoPart.name
+        )
+        Column(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .weight(1.0f, true)
+        ) {
+            Text(legoPart.name)
+            Text(
+                legoPart.partNumber,
+                color = Color.Gray,
+                fontSize = 11.sp
+            )
+        }
+
+        val definedPart = DefinedPart(
+            legoPart.partNumber.toInt(),
+            legoPart.partImageUrl,
+            legoPart.name
+        )
+        Checkbox(
+            modifier = Modifier.weight(0.1f, true),
+            checked = isChecked.value,
+            onCheckedChange = {
+                isChecked.value = it
+                onItemSelect(definedPart, it)
+            })
     }
 }
 
