@@ -1,14 +1,13 @@
 package com.darekbx.legopartscount.repository.brickset
 
-import com.darekbx.legopartscount.repository.brickset.model.GetSets
 import com.darekbx.legopartscount.repository.brickset.model.GetSetsResult
-import com.darekbx.legopartscount.repository.brickset.model.Login
 import com.darekbx.legopartscount.repository.brickset.model.LoginResult
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 private val BRICKSET_BASE_URL = "https://brickset.com/api/v3.asmx/"
@@ -38,9 +37,19 @@ interface Brickset {
         val DEFAULT_PAGE_SIZE = 1000
     }
 
+    @FormUrlEncoded
     @POST("login")
-    suspend fun login(@Body login: Login): LoginResult
+    suspend fun login(
+        @Field("apiKey") apiKey: String,
+        @Field("username") username: String,
+        @Field("password") password: String
+    ): LoginResult
 
+    @FormUrlEncoded
     @POST("getSets")
-    suspend fun getSets(@Body getSets: GetSets): GetSetsResult
+    suspend fun getSets(
+        @Field("apiKey") apiKey: String,
+        @Field("userHash") userHash: String,
+        @Field("params") params: String,
+    ): GetSetsResult
 }

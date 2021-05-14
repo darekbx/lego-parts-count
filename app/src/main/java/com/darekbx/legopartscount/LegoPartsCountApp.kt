@@ -23,11 +23,12 @@ class LegoPartsCountApp: Application() {
     private val databaseModule = module {
         single { AppDatabase.getDatabase(get()) }
         single { (get() as AppDatabase).definedPartsDao() }
+        single { (get() as AppDatabase).legoSetDefinedPartsDao() }
     }
 
     private val viewModelModule = module {
         viewModel { RebrickableViewModel(get(), get()) }
-        viewModel { AllSetsViewModel(get(), get(), get()) }
+        viewModel { AllSetsViewModel(get(), get(), get(), get()) }
         viewModel { DefinedPartsViewModel(get()) }
     }
 
