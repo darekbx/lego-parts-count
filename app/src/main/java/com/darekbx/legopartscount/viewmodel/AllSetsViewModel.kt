@@ -59,7 +59,7 @@ class AllSetsViewModel(
 ) : BaseViewModel() {
 
     companion object {
-        private const val LOAD_ONLINE = false
+        private const val LOAD_ONLINE = true
         private const val PAGE_SIZE = 1000
         private const val THEME = "Technic"
     }
@@ -67,14 +67,20 @@ class AllSetsViewModel(
     private val _result = MutableLiveData<LegoSetDefinedParts>()
     val result: LiveData<LegoSetDefinedParts> = _result
 
+    private val _setsAdded = MutableLiveData<Int?>(null)
+    val setsAdded: LiveData<Int?> = _setsAdded
+
     val progress = MutableLiveData<AllSetsProgress>()
 
     fun loadAllSets(fromYear: Int, minPartsCount: Int) {
         launchDataLoad {
 
+            // Hide loading for stored sets
+            loadingState.value = false
             val definedSets = legoSetDefinedPartsDao.selectAll()
             val definedSetsCount = definedSets.size
             definedSets.forEachIndexed { index, set ->
+
                 _result.value = LegoSetDefinedParts.fromEntity(set)
                 progress.value = AllSetsProgress(index + 1, definedSetsCount)
 
@@ -83,6 +89,7 @@ class AllSetsViewModel(
             }
 
             if (LOAD_ONLINE) {
+                loadingState.value = true
                 val storedDefinedSetNumbers = legoSetDefinedPartsDao.selectSetNumbers()
                 val definedParts = definedPartDao.selectAll()
                 val allSets = retrieveSets()
@@ -102,6 +109,8 @@ class AllSetsViewModel(
                     _result.postValue(legoSetDefinedParts)
                     progress.postValue(AllSetsProgress(index + 1, filteredSetsCount))
                 }
+
+                _setsAdded.postValue(filteredSetsCount)
             }
         }
     }

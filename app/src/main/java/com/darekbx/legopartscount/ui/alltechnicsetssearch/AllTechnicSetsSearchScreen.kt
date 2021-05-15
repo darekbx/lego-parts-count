@@ -1,9 +1,12 @@
 package com.darekbx.legopartscount.ui.alltechnicsetssearch
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
@@ -11,11 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darekbx.legopartscount.repository.rebrickable.model.LegoSet
+import com.darekbx.legopartscount.ui.LoadingView
 import com.darekbx.legopartscount.viewmodel.AllSetsViewModel
 import com.darekbx.legopartscount.viewmodel.LegoSetDefinedParts
 import com.google.accompanist.coil.rememberCoilPainter
@@ -24,20 +30,38 @@ import com.google.accompanist.coil.rememberCoilPainter
 fun AllTechnicSetsSearchScreen(
     allSetsViewModel: AllSetsViewModel
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-    ) {
-        Row(modifier = Modifier.weight(0.01F)) {
-            DisplayProgress(allSetsViewModel)
+    Box {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+        ) {
+            Row(modifier = Modifier.weight(0.01F)) {
+                DisplayProgress(allSetsViewModel)
+            }
+            Row(modifier = Modifier.weight(0.99F)) {
+                DisplaySets(allSetsViewModel)
+            }
         }
-        Row(modifier = Modifier.weight(0.99F)) {
-            DisplaySets(allSetsViewModel)
-        }
+        LoadingView(allSetsViewModel)
+        AddedSets(allSetsViewModel)
     }
 
-    allSetsViewModel.loadAllSets(2003, 500)
+    allSetsViewModel.loadAllSets(2021, 400)
+}
+
+@Composable
+private fun AddedSets(allSetsViewModel: AllSetsViewModel) {
+    val setsAdded = allSetsViewModel.setsAdded.observeAsState(false)
+    setsAdded.value?.let { addedSets ->
+        if (addedSets != null && addedSets != false) {
+            Toast.makeText(
+                LocalContext.current,
+                "Added $addedSets new sets",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 }
 
 @Composable
